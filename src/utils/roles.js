@@ -7,6 +7,7 @@ exports.roles = (() => {
   ac.grant(user.userRoles.guest)
     .readAny('post')
     .readAny('comment')
+    .readAny('profile')
 
   ac.grant(user.userRoles.user)
     .extend(user.userRoles.guest)

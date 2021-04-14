@@ -1,5 +1,7 @@
-module.exports = cb => (req, res, next, ...args) => {
+module.exports = func => async (req, res, next) => {
   try {
-    return cb(req, res, next, ...args)
-  } catch (err) { next(err) }
+    await func(req, res, next)
+  } catch (error) {
+    next(error)
+  }
 }

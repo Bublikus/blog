@@ -42,7 +42,21 @@ exports.findOne = async (req, res) => {
     return res.json(APIError.FORBIDDEN())
   }
 
-  return res.json(data)
+  delete profile.hash
+  delete profile.salt
+  delete profile.token
+
+  return res.json(profile)
+}
+
+exports.getMe = async (req, res) => {
+  const user = { ...req.user }
+
+  delete user.hash
+  delete user.salt
+  delete user.token
+
+  return res.json(user)
 }
 
 exports.update = async (req, res) => {

@@ -1,5 +1,6 @@
 const crypto = require('crypto')
 const jsonwebtoken = require('jsonwebtoken')
+const shortid = require('shortid')
 const config = require('../config')
 const APIError = require('../utils/errorAPI')
 const UserService = require('./user')
@@ -59,11 +60,15 @@ exports.login = async (user) => {
 
   const dbUser = await UserService.getByName(username)
 
-  if (!dbUser) throw new APIError('User in not registered', APIError.statusCodes.UNAUTHORIZED)
+  if (!dbUser) {
+    throw new APIError('User in not registered', APIError.statusCodes.UNAUTHORIZED)
+  }
 
   const isValid = validPassword(password, dbUser.hash, dbUser.salt)
 
-  if (!isValid) throw new APIError('Wrong password!', APIError.statusCodes.BAD_REQUEST)
+  if (!isValid) {
+    throw new APIError('Wrong password!', APIError.statusCodes.BAD_REQUEST)
+  }
 
   const { token, expiresIn } = issueJWT(dbUser)
 
@@ -83,10 +88,18 @@ exports.register = async (user) => {
   const { username, password } = user
   const { salt, hash } = genPassword(password)
 
+  if (!/^\w+$/.test(username)) {
+    throw new APIError('Username should be only letters, numbers and the underscore character.', APIError.statusCodes.BAD_REQUEST)
+  }
+  if (username.length > 50) {
+    throw new APIError('Username length should be maximum 50 characters.', APIError.statusCodes.BAD_REQUEST)
+  }
+
   const existingUser = await UserService.getByName(username)
   if (existingUser) throw new Error('User already registered')
 
   const userObj = await UserService.create({
+    id: shortid.generate(),
     username,
     role_id: config.user.userRoles.user,
     hash,
