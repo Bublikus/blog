@@ -5,7 +5,6 @@ const errorHandler = require('../utils/errorHandler')
 
 const router = Router()
 
-router.post('/', authorize, errorHandler(UserController.create))
 router.get('/', authorize, errorHandler(UserController.findAll))
 router.get('/me', authorize, errorHandler(UserController.getMe))
 router.get('/:id', authorize, errorHandler(UserController.findOne))

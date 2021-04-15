@@ -26,7 +26,7 @@ class BaseError extends Error {
 module.exports = class APIError extends BaseError {
   constructor(
     name = 'Server error',
-    httpCode = HttpStatusCode.INTERNAL_SERVER,
+    httpCode = statusCodes.INTERNAL_SERVER,
     isOperational = true,
     description,
     data

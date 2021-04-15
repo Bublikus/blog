@@ -1,28 +1,15 @@
 const { UserService } = require('../services')
+const { user } = require('../config')
 const { roles } = require('../utils/roles')
 const APIError = require('../utils/errorAPI')
 
 const isGranted = (role, action) => roles.can(role)[action]('profile').granted
 
-exports.create = async (req, res) => {
-  const { body } = req
-
-  if (!isGranted(req.user.role_id, 'createOwn')) {
-    return res.json(APIError.FORBIDDEN())
-  }
-
-  await UserService.create(body)
-
-  const profile = await UserService.getById(id)
-
-  return res.json(profile)
-}
-
 exports.findAll = async (req, res) => {
   const { query } = req
 
-  if (!isGranted(req.user.role_id, 'readAny')) {
-    return res.json(APIError.FORBIDDEN())
+  if (req.user.role_id !== user.userRoles.admin) {
+    throw APIError.FORBIDDEN()
   }
 
   const data = await UserService.getAll({ query })
@@ -35,11 +22,14 @@ exports.findOne = async (req, res) => {
 
   const profile = await UserService.getById(id)
 
-  if (profile.user_id === req.user.id && !isGranted(req.user.role_id, 'readOwn')) {
-    return res.json(APIError.FORBIDDEN())
+  if (!profile) {
+    throw APIError.NOT_FOUND()
   }
-  if (profile.user_id !== req.user.id && !isGranted(req.user.role_id, 'readAny')) {
-    return res.json(APIError.FORBIDDEN())
+  if (profile.id === req.user.id && !isGranted(req.user.role_id, 'readOwn')) {
+    throw APIError.FORBIDDEN()
+  }
+  if (profile.id !== req.user.id && !isGranted(req.user.role_id, 'readAny')) {
+    throw APIError.FORBIDDEN()
   }
 
   delete profile.hash
@@ -50,13 +40,13 @@ exports.findOne = async (req, res) => {
 }
 
 exports.getMe = async (req, res) => {
-  const user = { ...req.user }
+  const profile = { ...req.user }
 
-  delete user.hash
-  delete user.salt
-  delete user.token
+  delete profile.hash
+  delete profile.salt
+  delete profile.token
 
-  return res.json(user)
+  return res.json(profile)
 }
 
 exports.update = async (req, res) => {
@@ -64,11 +54,14 @@ exports.update = async (req, res) => {
 
   const profile = await UserService.getById(id)
 
-  if (profile.user_id === req.user.id && !isGranted(req.user.role_id, 'updateOwn')) {
-    return res.json(APIError.FORBIDDEN())
+  if (!profile) {
+    throw APIError.NOT_FOUND()
   }
-  if (profile.user_id !== req.user.id && !isGranted(req.user.role_id, 'updateAny')) {
-    return res.json(APIError.FORBIDDEN())
+  if (profile.id === req.user.id && !isGranted(req.user.role_id, 'updateOwn')) {
+    throw APIError.FORBIDDEN()
+  }
+  if (profile.id !== req.user.id && !isGranted(req.user.role_id, 'updateAny')) {
+    throw APIError.FORBIDDEN()
   }
 
   await UserService.updateById(id, body)
@@ -83,11 +76,17 @@ exports.delete = async (req, res) => {
 
   const profile = await UserService.getById(id)
 
-  if (profile.user_id === req.user.id && !isGranted(req.user.role_id, 'deleteOwn')) {
-    return res.json(APIError.FORBIDDEN())
+  if (!profile) {
+    throw APIError.NOT_FOUND()
   }
-  if (profile.user_id !== req.user.id && !isGranted(req.user.role_id, 'deleteAny')) {
-    return res.json(APIError.FORBIDDEN())
+  if (profile.id === req.user.id && !isGranted(req.user.role_id, 'deleteOwn')) {
+    throw APIError.FORBIDDEN()
+  }
+  if (profile.id !== req.user.id && !isGranted(req.user.role_id, 'deleteAny')) {
+    throw APIError.FORBIDDEN()
+  }
+  if (req.user.role_id === user.userRoles.admin && req.user.id === profile.id) {
+    throw APIError.FORBIDDEN()
   }
 
   await UserService.deleteById(id)

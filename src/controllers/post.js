@@ -9,7 +9,7 @@ exports.create = async (req, res) => {
   const { body } = req
 
   if (!isGranted(req.user.role_id, 'createOwn')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
 
   await PostService.create(body)
@@ -23,7 +23,7 @@ exports.findAll = async (req, res) => {
   const { query } = req
 
   if (!isGranted(req.user.role_id, 'readAny')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
 
   // Filter private posts from unauthorized users
@@ -41,14 +41,17 @@ exports.findOne = async (req, res) => {
 
   const post = await PostService.getById(id)
 
+  if (!post) {
+    throw APIError.NOT_FOUND()
+  }
   if (post.user_id === req.user.id && !isGranted(req.user.role_id, 'readOwn')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
   if (post.user_id !== req.user.id && !isGranted(req.user.role_id, 'readAny')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
   if (req.user.id === user.userRoles.guest && post.private) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
 
   return res.json(post)
@@ -59,11 +62,14 @@ exports.update = async (req, res) => {
 
   const post = await PostService.getById(id)
 
+  if (!post) {
+    throw APIError.NOT_FOUND()
+  }
   if (post.user_id === req.user.id && !isGranted(req.user.role_id, 'updateOwn')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
   if (post.user_id !== req.user.id && !isGranted(req.user.role_id, 'updateAny')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
 
   await PostService.updateById(id, body)
@@ -78,11 +84,14 @@ exports.delete = async (req, res) => {
 
   const post = await PostService.getById(id)
 
+  if (!post) {
+    throw APIError.NOT_FOUND()
+  }
   if (post.user_id === req.user.id && !isGranted(req.user.role_id, 'deleteOwn')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
   if (post.user_id !== req.user.id && !isGranted(req.user.role_id, 'deleteAny')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
 
   await PostService.deleteById(id)

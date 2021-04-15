@@ -1,12 +1,22 @@
+const { userValidation } = require('../validators')
 const db = require('../models')
 const dbName = 'users'
 
 exports.create = async (data) => {
+  userValidation.validateUsername(data.username)
+
   return db(dbName).insert(data)
 }
 
 exports.getAll = async ({ query }) => {
-  return db(dbName).where(query)
+  return db(dbName).select([
+    'id',
+    'username',
+    'role_id',
+    'avatar_id',
+    'created_at',
+    'updated_at',
+  ]).where(query)
 }
 
 exports.getById = async (id) => {
@@ -14,6 +24,8 @@ exports.getById = async (id) => {
 }
 
 exports.updateById = async (id, data) => {
+  userValidation.validateUsername(data.username)
+
   return db(dbName).where({ id }).update(data)
 }
 

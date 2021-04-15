@@ -40,5 +40,7 @@ exports.roles = (() => {
     .updateAny('like')
     .deleteAny('like')
 
+  ac.lock()
+
   return ac
 })()

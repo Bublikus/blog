@@ -8,7 +8,7 @@ exports.create = async (req, res) => {
   const { body } = req
 
   if (!isGranted(req.user.role_id, 'createOwn')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
 
   await LikeService.create(body)
@@ -22,7 +22,7 @@ exports.findAll = async (req, res) => {
   const { query } = req
 
   if (!isGranted(req.user.role_id, 'readAny')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
 
   const data = await LikeService.getAll({ query })
@@ -35,11 +35,14 @@ exports.findOne = async (req, res) => {
 
   const like = await LikeService.getById(id)
 
+  if (!like) {
+    throw APIError.NOT_FOUND()
+  }
   if (like.user_id === req.user.id && !isGranted(req.user.role_id, 'readOwn')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
   if (like.user_id !== req.user.id && !isGranted(req.user.role_id, 'readAny')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
 
   return res.json(like)
@@ -50,11 +53,14 @@ exports.update = async (req, res) => {
 
   const like = await LikeService.getById(id)
 
+  if (!like) {
+    throw APIError.NOT_FOUND()
+  }
   if (like.user_id === req.user.id && !isGranted(req.user.role_id, 'updateOwn')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
   if (like.user_id !== req.user.id && !isGranted(req.user.role_id, 'updateAny')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
 
   await LikeService.updateById(id, body)
@@ -69,11 +75,14 @@ exports.delete = async (req, res) => {
 
   const like = await LikeService.getById(id)
 
+  if (!like) {
+    throw APIError.NOT_FOUND()
+  }
   if (like.user_id === req.user.id && !isGranted(req.user.role_id, 'deleteOwn')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
   if (like.user_id !== req.user.id && !isGranted(req.user.role_id, 'deleteAny')) {
-    return res.json(APIError.FORBIDDEN())
+    throw APIError.FORBIDDEN()
   }
 
   await LikeService.deleteById(id)

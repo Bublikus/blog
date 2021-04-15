@@ -2,6 +2,7 @@ const crypto = require('crypto')
 const jsonwebtoken = require('jsonwebtoken')
 const shortid = require('shortid')
 const config = require('../config')
+const { userValidation } = require('../validators')
 const APIError = require('../utils/errorAPI')
 const UserService = require('./user')
 
@@ -80,7 +81,7 @@ exports.login = async (user) => {
   return {
     token,
     expiresIn,
-    user: formattedUser,
+    data: formattedUser,
   }
 }
 
@@ -88,12 +89,7 @@ exports.register = async (user) => {
   const { username, password } = user
   const { salt, hash } = genPassword(password)
 
-  if (!/^\w+$/.test(username)) {
-    throw new APIError('Username should be only letters, numbers and the underscore character.', APIError.statusCodes.BAD_REQUEST)
-  }
-  if (username.length > 50) {
-    throw new APIError('Username length should be maximum 50 characters.', APIError.statusCodes.BAD_REQUEST)
-  }
+  userValidation.validateUsername(username)
 
   const existingUser = await UserService.getByName(username)
   if (existingUser) throw new Error('User already registered')
