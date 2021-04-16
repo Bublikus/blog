@@ -85,9 +85,6 @@ exports.delete = async (req, res) => {
   if (profile.id !== req.user.id && !isGranted(req.user.role_id, 'deleteAny')) {
     throw APIError.FORBIDDEN()
   }
-  if (req.user.role_id === user.userRoles.admin && req.user.id === profile.id) {
-    throw APIError.FORBIDDEN()
-  }
 
   await UserService.deleteById(id)
 

@@ -218,11 +218,10 @@ describe('Users route', () => {
   })
 
   it('Admin: Delete self', async () => {
-    await request(app).delete('/api/users/1').set('Authorization', users.admin.token).expect(403)
-
-    const stillAdmin = await request(app).get('/api/users/me').set('Authorization', users.admin.token)
-    isResponseOK(stillAdmin)
-    expect(stillAdmin.body.data.username).toEqual(users.admin.data.username)
+    await request(app).delete('/api/users/1').set('Authorization', users.admin.token).expect(200)
+    const resAdmin = await request(app).get('/api/users/1').set('Authorization', users.admin.token)
+    expect(resAdmin.status).toEqual(404)
+    expect(resAdmin.body.data).toBeFalsy()
   })
 
 })

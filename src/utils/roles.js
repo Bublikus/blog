@@ -5,7 +5,7 @@ const ac = new AccessControl()
 
 exports.roles = (() => {
   ac.grant(user.userRoles.guest)
-    .readAny('post')
+    .readAny('post') // but only when "private": false
     .readAny('comment')
     .readAny('profile')
 
