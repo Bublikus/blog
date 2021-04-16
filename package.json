@@ -4,7 +4,7 @@
   "description": "Simple blog",
   "main": "server.js",
   "scripts": {
-    "test": "jest --forceExit",
+    "test": "jest --forceExit --runInBand",
     "start": "nodemon server.js"
   },
   "author": "Bublikus",

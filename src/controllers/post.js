@@ -50,7 +50,7 @@ exports.findOne = async (req, res) => {
   if (post.user_id !== req.user.id && !isGranted(req.user.role_id, 'readAny')) {
     throw APIError.FORBIDDEN()
   }
-  if (req.user.id === user.userRoles.guest && post.private) {
+  if (req.user.role_id === user.userRoles.guest && post.private) {
     throw APIError.FORBIDDEN()
   }
 

@@ -41,7 +41,6 @@ exports.getTokens = async () => {
     editor,
     user,
     guest: {
-      error: null,
       data: {
         role_id: userConfig.userRoles.guest
       }

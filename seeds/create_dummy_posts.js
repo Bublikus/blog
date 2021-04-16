@@ -28,7 +28,7 @@ exports.seed = function(knex) {
           id: '3',
           title: '3rd Post',
           content: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-          user_id: '3',
+          user_id: '2',
           private: true,
           created_at: knex.fn.now(),
           updated_at: knex.fn.now(),
