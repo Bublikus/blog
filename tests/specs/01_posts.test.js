@@ -137,6 +137,21 @@ describe('Posts route', () => {
       expect(retrieveNewPost.body.data.private).toBeTruthy()
     })
 
+    it('Correct validation of post creation', async () => {
+      await request(app).post(BASE_PATH).set('Authorization', users.editor.token).send({
+        content: postsMock.privatePost.content,
+        private: postsMock.privatePost.private,
+      }).expect(400)
+      await request(app).post(BASE_PATH).set('Authorization', users.editor.token).send({
+        title: postsMock.privatePost.title,
+        private: postsMock.privatePost.private,
+      }).expect(400)
+      await request(app).post(BASE_PATH).set('Authorization', users.editor.token).send({
+        title: postsMock.privatePost.title,
+        content: postsMock.privatePost.content,
+      }).expect(400)
+    })
+
     it('Can update own post', async () => {
       const updatedPost = await request(app)
         .put(`${BASE_PATH}/2`)

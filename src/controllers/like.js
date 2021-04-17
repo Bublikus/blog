@@ -1,3 +1,4 @@
+const shortid = require('shortid')
 const { LikeService } = require('../services')
 const { roles } = require('../utils/roles')
 const APIError = require('../utils/errorAPI')
@@ -12,6 +13,8 @@ exports.create = async (req, res) => {
   }
 
   await LikeService.create(body)
+
+  body.id = shortid.generate()
 
   const like = await LikeService.getById(id)
 

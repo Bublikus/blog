@@ -2,7 +2,13 @@ const db = require('../models')
 const dbName = 'likes'
 
 exports.create = async (data) => {
-  return db(dbName).insert(data)
+  const entity = {
+    ...data,
+    created_at: new Date(Date.now()),
+    updated_at: new Date(Date.now()),
+  }
+
+  return db(dbName).insert(entity)
 }
 
 exports.getAll = async ({ query }) => {
@@ -14,7 +20,12 @@ exports.getById = async (id) => {
 }
 
 exports.updateById = async (id, data) => {
-  return db(dbName).where({ id }).update(data)
+  const entity = {
+    ...data,
+    updated_at: new Date(Date.now()),
+  }
+
+  return db(dbName).where({ id }).update(entity)
 }
 
 exports.deleteById = async (id) => {

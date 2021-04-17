@@ -5,7 +5,13 @@ const dbName = 'users'
 exports.create = async (data) => {
   userValidation.validateUsername(data.username)
 
-  return db(dbName).insert(data)
+  const entity = {
+    ...data,
+    created_at: new Date(Date.now()),
+    updated_at: new Date(Date.now()),
+  }
+
+  return db(dbName).insert(entity)
 }
 
 exports.getAll = async ({ query }) => {
@@ -26,7 +32,12 @@ exports.getById = async (id) => {
 exports.updateById = async (id, data) => {
   userValidation.validateUsername(data.username)
 
-  return db(dbName).where({ id }).update(data)
+  const entity = {
+    ...data,
+    updated_at: new Date(Date.now()),
+  }
+
+  return db(dbName).where({ id }).update(entity)
 }
 
 exports.deleteById = async (id) => {
