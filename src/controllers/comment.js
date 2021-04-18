@@ -1,8 +1,5 @@
-const shortid = require('shortid')
 const { CommentService } = require('../services')
 const { roles } = require('../utils/roles')
-const validate = require('../middlewares/validate')
-const { commentSchema } = require('../schemas')
 const APIError = require('../utils/errorAPI')
 
 const isGranted = (role, action) => roles.can(role)[action]('comment').granted
@@ -14,13 +11,8 @@ exports.create = async (req, res) => {
     throw APIError.FORBIDDEN()
   }
 
-  await validate(commentSchema.create)(req)
-
-  body.id = shortid.generate()
-
-  await CommentService.create(body)
-
-  const comment = await CommentService.getById(body.id)
+  body.user_id = req.user.id
+  const comment = await CommentService.create(body)
 
   return res.json(comment)
 }
@@ -70,13 +62,9 @@ exports.update = async (req, res) => {
     throw APIError.FORBIDDEN()
   }
 
-  await validate(commentSchema.create)(req)
+  const updatedComment = await CommentService.updateById(id, body)
 
-  await CommentService.updateById(id, body)
-
-  const data = await CommentService.getById(id)
-
-  return res.json(data)
+  return res.json(updatedComment)
 }
 
 exports.delete = async (req, res) => {

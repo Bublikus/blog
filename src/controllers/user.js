@@ -64,11 +64,9 @@ exports.update = async (req, res) => {
     throw APIError.FORBIDDEN()
   }
 
-  await UserService.updateById(id, body)
+  const updatedProfile = await UserService.updateById(id, body)
 
-  const data = await UserService.getById(id)
-
-  return res.json(data)
+  return res.json(updatedProfile)
 }
 
 exports.delete = async (req, res) => {

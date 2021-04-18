@@ -1,8 +1,6 @@
 const crypto = require('crypto')
 const jsonwebtoken = require('jsonwebtoken')
-const shortid = require('shortid')
 const config = require('../config')
-const { userValidation } = require('../validators')
 const APIError = require('../utils/errorAPI')
 const UserService = require('./user')
 
@@ -89,13 +87,10 @@ exports.register = async (user) => {
   const { username, password } = user
   const { salt, hash } = genPassword(password)
 
-  userValidation.validateUsername(username)
-
   const existingUser = await UserService.getByName(username)
   if (existingUser) throw new Error('User already registered')
 
   const userObj = await UserService.create({
-    id: shortid.generate(),
     username,
     role_id: config.user.userRoles.user,
     hash,

@@ -13,6 +13,9 @@ const create = Joi.object({
 
   private: Joi.boolean()
     .required(),
+
+  user_id: Joi.string()
+    .required(),
 })
 
 const update = Joi.object({

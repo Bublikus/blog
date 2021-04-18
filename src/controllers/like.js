@@ -1,4 +1,3 @@
-const shortid = require('shortid')
 const { LikeService } = require('../services')
 const { roles } = require('../utils/roles')
 const APIError = require('../utils/errorAPI')
@@ -12,11 +11,8 @@ exports.create = async (req, res) => {
     throw APIError.FORBIDDEN()
   }
 
-  await LikeService.create(body)
-
-  body.id = shortid.generate()
-
-  const like = await LikeService.getById(id)
+  body.user_id = req.user.id
+  const like = await LikeService.create(body)
 
   return res.json(like)
 }
@@ -66,11 +62,9 @@ exports.update = async (req, res) => {
     throw APIError.FORBIDDEN()
   }
 
-  await LikeService.updateById(id, body)
+  const updatedLike = await LikeService.updateById(id, body)
 
-  const data = await LikeService.getById(id)
-
-  return res.json(data)
+  return res.json(updatedLike)
 }
 
 exports.delete = async (req, res) => {

@@ -1,16 +1,26 @@
+const shortid = require('shortid')
 const db = require('../models')
+const validate = require('../middlewares/validate')
+const { commentSchema } = require('../schemas')
+const deleteUndefinedFields = require('../utils/deleteUndefinedFields')
+
 const dbName = 'comments'
 
 exports.create = async (data) => {
+  await validate(commentSchema.create)({ body: data })
+
   const entity = {
-    id: data.id,
+    id: shortid.generate(),
     comment: data.comment,
     user_id: data.user_id,
     post_id: data.post_id,
     created_at: new Date(Date.now()),
     updated_at: new Date(Date.now()),
   }
-  return db(dbName).insert(entity)
+
+  await db(dbName).insert(entity)
+
+  return entity
 }
 
 exports.getAll = async ({ query }) => {
@@ -22,11 +32,16 @@ exports.getById = async (id) => {
 }
 
 exports.updateById = async (id, data) => {
-  const entity = {
+  await validate(commentSchema.update)({ body: data })
+
+  const entity = deleteUndefinedFields({
     comment: data.comment,
     updated_at: new Date(Date.now()),
-  }
-  return db(dbName).where({ id }).update(entity)
+  })
+
+  await db(dbName).where({ id }).update(entity)
+
+  return entity
 }
 
 exports.deleteById = async (id) => {

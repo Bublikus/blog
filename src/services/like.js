@@ -1,14 +1,26 @@
+const shortid = require('shortid')
 const db = require('../models')
+const validate = require('../middlewares/validate')
+const { likeSchema } = require('../schemas')
+const deleteUndefinedFields = require('../utils/deleteUndefinedFields')
+
 const dbName = 'likes'
 
 exports.create = async (data) => {
+  await validate(likeSchema.create)({ body: data })
+
   const entity = {
-    ...data,
+    id: shortid.generate(),
+    user_id: data.user_id,
+    post_id: data.post_id,
+    comment_id: data.comment_id,
     created_at: new Date(Date.now()),
     updated_at: new Date(Date.now()),
   }
 
-  return db(dbName).insert(entity)
+  await db(dbName).insert(entity)
+
+  return entity
 }
 
 exports.getAll = async ({ query }) => {
@@ -20,12 +32,13 @@ exports.getById = async (id) => {
 }
 
 exports.updateById = async (id, data) => {
-  const entity = {
-    ...data,
+  const entity = deleteUndefinedFields({
     updated_at: new Date(Date.now()),
-  }
+  })
 
-  return db(dbName).where({ id }).update(entity)
+  await db(dbName).where({ id }).update(entity)
+
+  return entity
 }
 
 exports.deleteById = async (id) => {

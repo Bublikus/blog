@@ -1,9 +1,6 @@
-const shortid = require('shortid')
 const { PostService } = require('../services')
 const { user } = require('../config')
 const { roles } = require('../utils/roles')
-const { postSchema } = require('../schemas')
-const validate = require('../middlewares/validate')
 const APIError = require('../utils/errorAPI')
 
 const isGranted = (role, action) => roles.can(role)[action]('post').granted
@@ -15,13 +12,10 @@ exports.create = async (req, res) => {
     throw APIError.FORBIDDEN()
   }
 
-  await validate(postSchema.create)(req)
+  body.user_id = req.user.id
+  const post = await PostService.create(body)
 
-  body.id = shortid.generate()
-
-  await PostService.create(body)
-
-  const post = await PostService.getById(body.id)
+  console.log(post)
 
   return res.json(post)
 }
@@ -38,9 +32,9 @@ exports.findAll = async (req, res) => {
     query.private = false
   }
 
-  const data = await PostService.getAll({ query })
+  const post = await PostService.getAll({ query })
 
-  return res.json(data)
+  return res.json(post)
 }
 
 exports.findOne = async (req, res) => {
@@ -79,13 +73,9 @@ exports.update = async (req, res) => {
     throw APIError.FORBIDDEN()
   }
 
-  await validate(postSchema.update)(req)
+  const updatedPost = await PostService.updateById(id, body)
 
-  await PostService.updateById(id, body)
-
-  const data = await PostService.getById(id)
-
-  return res.json(data)
+  return res.json(updatedPost)
 }
 
 exports.delete = async (req, res) => {
