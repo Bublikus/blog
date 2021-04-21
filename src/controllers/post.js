@@ -74,6 +74,7 @@ exports.update = async (req, res) => {
   }
 
   const updatedPost = await PostService.updateById(id, body)
+  updatedPost.user_id = req.user.id
 
   return res.json(updatedPost)
 }

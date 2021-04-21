@@ -51,7 +51,7 @@ exports.updateById = async (id, data) => {
 
   db(dbName).where({ id }).update(entity)
 
-  return entity
+  return { id, ...entity }
 }
 
 exports.deleteById = async (id) => {

@@ -63,6 +63,9 @@ exports.update = async (req, res) => {
   }
 
   const updatedComment = await CommentService.updateById(id, body)
+  updatedComment.user_id = req.user.id
+  updatedComment.post_id = comment.post_id
+  updatedComment.created_at = comment.created_at
 
   return res.json(updatedComment)
 }

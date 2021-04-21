@@ -5,6 +5,7 @@ const errorHandler = require('../utils/errorHandler')
 
 const router = Router()
 
+router.get('/', authorize, errorHandler(CommentController.findAll))
 router.post('/', authorize, errorHandler(CommentController.create))
 router.put('/:id', authorize, errorHandler(CommentController.update))
 router.delete('/:id', authorize, errorHandler(CommentController.delete))

@@ -44,7 +44,7 @@ exports.updateById = async (id, data) => {
 
   await db(dbName).where({ id }).update(entity)
 
-  return entity
+  return { id, ...entity }
 }
 
 exports.deleteById = async (id) => {

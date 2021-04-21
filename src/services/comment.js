@@ -24,6 +24,8 @@ exports.create = async (data) => {
 }
 
 exports.getAll = async ({ query }) => {
+  await validate(commentSchema.getAll)({ body: query })
+
   return db(dbName).where(query)
 }
 
@@ -41,7 +43,7 @@ exports.updateById = async (id, data) => {
 
   await db(dbName).where({ id }).update(entity)
 
-  return entity
+  return { id, ...entity }
 }
 
 exports.deleteById = async (id) => {

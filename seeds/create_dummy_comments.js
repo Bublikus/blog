@@ -21,12 +21,19 @@ exports.seed = function(knex) {
           created_at: knex.fn.now(),
           updated_at: knex.fn.now(),
         },
-
         {
           id: '3',
           comment: '3rd Post. Lorem ipsum dolor sit amet',
           user_id: '2',
           post_id: '2',
+          created_at: knex.fn.now(),
+          updated_at: knex.fn.now(),
+        },
+        {
+          id: '4',
+          comment: '3rd Post. Lorem ipsum dolor sit amet',
+          user_id: '3',
+          post_id: '3',
           created_at: knex.fn.now(),
           updated_at: knex.fn.now(),
         },

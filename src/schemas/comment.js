@@ -18,7 +18,13 @@ const update = Joi.object({
     .required(),
 })
 
+const getAll = Joi.object({
+  post_id: Joi.string()
+    .required(),
+})
+
 module.exports = {
   create,
   update,
+  getAll,
 }

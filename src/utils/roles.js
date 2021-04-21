@@ -24,6 +24,7 @@ exports.roles = (() => {
     .createOwn('post')
     .updateOwn('post')
     .deleteOwn('post')
+    .updateOwn('comment')
 
   ac.grant(user.userRoles.admin)
     .extend(user.userRoles.editor)
