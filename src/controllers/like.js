@@ -1,5 +1,6 @@
 const { LikeService } = require('../services')
 const { roles } = require('../utils/roles')
+const deleteUndefinedFields = require('../utils/deleteUndefinedFields')
 const APIError = require('../utils/errorAPI')
 
 const isGranted = (role, action) => roles.can(role)[action]('like').granted
@@ -11,10 +12,20 @@ exports.create = async (req, res) => {
     throw APIError.FORBIDDEN()
   }
 
-  body.user_id = req.user.id
-  const like = await LikeService.create(body)
+  const like = await LikeService.getOneByQuery(deleteUndefinedFields({
+    user_id: req.user.id,
+    post_id: body.post_id,
+    comment_id: body.comment_id,
+  }))
 
-  return res.json(like)
+  if (like) {
+    return res.json(like)
+  }
+
+  body.user_id = req.user.id
+  const createdLike = await LikeService.create(body)
+
+  return res.json(createdLike)
 }
 
 exports.findAll = async (req, res) => {
@@ -68,9 +79,10 @@ exports.update = async (req, res) => {
 }
 
 exports.delete = async (req, res) => {
-  const { params: { id } } = req
+  const { query } = req
 
-  const like = await LikeService.getById(id)
+  query.user_id = req.user.id
+  const like = await LikeService.getOneByQuery(query)
 
   if (!like) {
     throw APIError.NOT_FOUND()
@@ -82,7 +94,7 @@ exports.delete = async (req, res) => {
     throw APIError.FORBIDDEN()
   }
 
-  await LikeService.deleteById(id)
+  await LikeService.deleteOneByQuery(query)
 
   return res.json(true)
 }

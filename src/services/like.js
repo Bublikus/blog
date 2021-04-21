@@ -31,6 +31,12 @@ exports.getById = async (id) => {
   return db(dbName).where({ id }).first()
 }
 
+exports.getOneByQuery = async (query) => {
+  await validate(likeSchema.create)({ body: query })
+
+  return db(dbName).where(query).first()
+}
+
 exports.updateById = async (id, data) => {
   const entity = deleteUndefinedFields({
     updated_at: new Date(Date.now()),
@@ -43,4 +49,10 @@ exports.updateById = async (id, data) => {
 
 exports.deleteById = async (id) => {
   return db(dbName).where({ id }).del()
+}
+
+exports.deleteOneByQuery = async (query) => {
+  await validate(likeSchema.create)({ body: query })
+
+  return db(dbName).where(query).first().del()
 }

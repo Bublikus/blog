@@ -40,7 +40,6 @@ exports.seed = function(knex) {
           created_at: knex.fn.now(),
           updated_at: knex.fn.now(),
         },
-
         {
           id: '3',
           avatarStyle: 'Circle',

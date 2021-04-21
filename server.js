@@ -9,6 +9,12 @@ const passportSetup = require('./src/utils/passport')
 
 const app = express()
 
+app.set('json replacer', function (key, value) {
+  // undefined values are set to `null`
+  if (typeof value === "undefined") return null
+  return value
+})
+
 passportSetup(passport)
 
 app.use(bodyParser.urlencoded({ extended: true }))
