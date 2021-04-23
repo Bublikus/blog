@@ -49,7 +49,7 @@ exports.updateById = async (id, data) => {
     updated_at: new Date(Date.now()),
   })
 
-  db(dbName).where({ id }).update(entity)
+  await db(dbName).where({ id }).update(entity)
 
   return { id, ...entity }
 }
