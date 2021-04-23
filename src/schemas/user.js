@@ -7,11 +7,6 @@ const create = Joi.object({
     .regex(/^\w+$/)
     .required(),
 
-  password: Joi.string()
-    .min(6)
-    .max(100)
-    .required(),
-
   hash: Joi.string()
     .required(),
 

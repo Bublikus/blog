@@ -1,7 +1,9 @@
 const crypto = require('crypto')
 const jsonwebtoken = require('jsonwebtoken')
 const config = require('../config')
+const validate = require('../middlewares/validate')
 const APIError = require('../utils/errorAPI')
+const { userSchema } = require('../schemas')
 const UserService = require('./user')
 
 /**
@@ -85,6 +87,9 @@ exports.login = async (user) => {
 
 exports.register = async (user) => {
   const { username, password } = user
+
+  await validate(userSchema.update)({ body: user })
+
   const { salt, hash } = genPassword(password)
 
   const existingUser = await UserService.getByName(username)
@@ -97,10 +102,8 @@ exports.register = async (user) => {
     salt,
   })
 
-  const savedUser = userObj.toJSON()
+  delete userObj.hash
+  delete userObj.salt
 
-  delete savedUser.hash
-  delete savedUser.salt
-
-  return savedUser
+  return userObj
 }

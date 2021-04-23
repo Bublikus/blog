@@ -83,7 +83,7 @@ exports.update = async (req, res) => {
   updatedComment.post_id = comment.post_id
   updatedComment.created_at = comment.created_at
 
-  return res.json(updatedComment)
+  return res.json({ ...comment, ...updatedComment })
 }
 
 exports.delete = async (req, res) => {

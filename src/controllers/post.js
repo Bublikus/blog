@@ -89,7 +89,7 @@ exports.update = async (req, res) => {
   updatedPost.likes = post.likes
   updatedPost.is_liked = post.is_liked
 
-  return res.json(updatedPost)
+  return res.json({ ...post, ...updatedPost })
 }
 
 exports.delete = async (req, res) => {

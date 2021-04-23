@@ -66,7 +66,10 @@ exports.update = async (req, res) => {
 
   const updatedProfile = await UserService.updateById(id, body)
 
-  return res.json(updatedProfile)
+  delete profile.hash
+  delete profile.salt
+
+  return res.json({ ...profile, ...updatedProfile })
 }
 
 exports.delete = async (req, res) => {

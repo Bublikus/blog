@@ -7,7 +7,7 @@ exports.seed = function(knex) {
       return knex('users').insert([
         {
           id: '1',
-          username: 'John_Doe',
+          username: 'admin',
           role_id: 'admin',
           avatar_id: '1',
           salt: 'c1ef95a8997d62df3fbd2e670ef1b1d211f709453114f6f8718ef36c7048f110',
@@ -17,7 +17,7 @@ exports.seed = function(knex) {
         },
         {
           id: '2',
-          username: 'Edward_Le',
+          username: 'editor',
           role_id: 'editor',
           avatar_id: '2',
           salt: 'c1ef95a8997d62df3fbd2e670ef1b1d211f709453114f6f8718ef36c7048f110',
@@ -27,7 +27,7 @@ exports.seed = function(knex) {
         },
         {
           id: '3',
-          username: 'Raphael_Amigo',
+          username: 'user',
           role_id: 'user',
           avatar_id: '3',
           salt: 'c1ef95a8997d62df3fbd2e670ef1b1d211f709453114f6f8718ef36c7048f110',
