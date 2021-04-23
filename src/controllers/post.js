@@ -1,4 +1,4 @@
-const { PostService } = require('../services')
+const { PostService, LikeService } = require('../services')
 const { user } = require('../config')
 const { roles } = require('../utils/roles')
 const APIError = require('../utils/errorAPI')
@@ -14,8 +14,8 @@ exports.create = async (req, res) => {
 
   body.user_id = req.user.id
   const post = await PostService.create(body)
-
-  console.log(post)
+  post.likes = 0
+  post.is_liked = false
 
   return res.json(post)
 }
@@ -32,9 +32,17 @@ exports.findAll = async (req, res) => {
     query.private = false
   }
 
-  const post = await PostService.getAll({ query })
+  const posts = await PostService.getAll({ query })
 
-  return res.json(post)
+  let filteredLikedPosts = []
+  if (req.user.id) {
+    const likedPost = await LikeService.getAllByPosts({ query: { user_id: req.user.id }, select: ['post_id'] })
+    filteredLikedPosts = likedPost.map(p => p.post_id)
+  }
+
+  const resultPosts = posts.map(p => ({ ...p, is_liked: filteredLikedPosts.includes(p.id) }))
+
+  return res.json(resultPosts)
 }
 
 exports.findOne = async (req, res) => {
@@ -45,6 +53,9 @@ exports.findOne = async (req, res) => {
   if (!post) {
     throw APIError.NOT_FOUND()
   }
+
+  post.is_liked = req.user.id ? !!await LikeService.getOneByQuery({ post_id: post.id, user_id: req.user.id }) : false
+
   if (post.user_id === req.user.id && !isGranted(req.user.role_id, 'readOwn')) {
     throw APIError.FORBIDDEN()
   }
@@ -75,6 +86,8 @@ exports.update = async (req, res) => {
 
   const updatedPost = await PostService.updateById(id, body)
   updatedPost.user_id = req.user.id
+  updatedPost.likes = post.likes
+  updatedPost.is_liked = post.is_liked
 
   return res.json(updatedPost)
 }

@@ -26,7 +26,12 @@ exports.create = async (data) => {
 exports.getAll = async ({ query }) => {
   await validate(commentSchema.getAll)({ body: query })
 
-  return db(dbName).where(query)
+  return db.from(dbName)
+    .where(query)
+    .select(
+      '*',
+      db('likes').count('*').whereRaw('?? = ??', ['likes.comment_id', `${dbName}.id`]).as('likes')
+    )
 }
 
 exports.getById = async (id) => {

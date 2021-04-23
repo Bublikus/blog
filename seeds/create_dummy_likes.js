@@ -29,6 +29,38 @@ exports.seed = function(knex) {
           created_at: knex.fn.now(),
           updated_at: knex.fn.now(),
         },
+        {
+          id: '4',
+          user_id: '1',
+          post_id: '2',
+          comment_id: null,
+          created_at: knex.fn.now(),
+          updated_at: knex.fn.now(),
+        },
+        {
+          id: '5',
+          user_id: '2',
+          post_id: '2',
+          comment_id: null,
+          created_at: knex.fn.now(),
+          updated_at: knex.fn.now(),
+        },
+        {
+          id: '6',
+          user_id: '3',
+          post_id: '3',
+          comment_id: null,
+          created_at: knex.fn.now(),
+          updated_at: knex.fn.now(),
+        },
+        {
+          id: '7',
+          user_id: '2',
+          post_id: null,
+          comment_id: '3',
+          created_at: knex.fn.now(),
+          updated_at: knex.fn.now(),
+        },
       ]);
     });
 };

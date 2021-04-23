@@ -12,6 +12,8 @@ exports.up = async function(knex) {
       table.uuid('user_id').references('id').inTable('users').onDelete('CASCADE')
       table.timestamp('created_at').notNullable().defaultTo(knex.fn.now())
       table.timestamp('updated_at').notNullable().defaultTo(knex.fn.now())
+
+      table.index(['user_id'])
     })
   })
 }

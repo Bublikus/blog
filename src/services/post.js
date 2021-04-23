@@ -25,11 +25,22 @@ exports.create = async (data) => {
 }
 
 exports.getAll = async ({ query }) => {
-  return db(dbName).where(query)
+  return db.from(dbName)
+    .where(query)
+    .select(
+      '*',
+      db('likes').count('*').whereRaw('?? = ??', ['likes.post_id', `${dbName}.id`]).as('likes')
+    )
 }
 
 exports.getById = async (id) => {
-  return db(dbName).where({ id }).first()
+  return db(dbName)
+    .where({ id })
+    .select(
+      '*',
+      db('likes').count('*').whereRaw('?? = ??', ['likes.post_id', `${dbName}.id`]).as('likes')
+    )
+    .first()
 }
 
 exports.updateById = async (id, data) => {

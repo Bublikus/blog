@@ -1,4 +1,4 @@
-const { CommentService } = require('../services')
+const { CommentService, LikeService } = require('../services')
 const { roles } = require('../utils/roles')
 const APIError = require('../utils/errorAPI')
 
@@ -13,6 +13,8 @@ exports.create = async (req, res) => {
 
   body.user_id = req.user.id
   const comment = await CommentService.create(body)
+  comment.likes = 0
+  comment.is_liked = false
 
   return res.json(comment)
 }
@@ -24,9 +26,17 @@ exports.findAll = async (req, res) => {
     throw APIError.FORBIDDEN()
   }
 
-  const data = await CommentService.getAll({ query })
+  const comments = await CommentService.getAll({ query })
 
-  return res.json(data)
+  let filteredLikedComments = []
+  if (req.user.id) {
+    const likedComments = await LikeService.getAllByComments({ query: { user_id: req.user.id }, select: ['comment_id'] })
+    filteredLikedComments = likedComments.map(p => p.comment_id)
+  }
+
+  const resultComments = comments.map(p => ({ ...p, is_liked: filteredLikedComments.includes(p.id) }))
+
+  return res.json(resultComments)
 }
 
 exports.findOne = async (req, res) => {
@@ -37,6 +47,9 @@ exports.findOne = async (req, res) => {
   if (!comment) {
     throw APIError.NOT_FOUND()
   }
+
+  comment.is_liked = req.user.id ? !!await LikeService.getOneByQuery({ comment_id: comment.id, user_id: req.user.id }) : false
+
   if (comment.user_id === req.user.id && !isGranted(req.user.role_id, 'readOwn')) {
     throw APIError.FORBIDDEN()
   }
@@ -64,6 +77,9 @@ exports.update = async (req, res) => {
 
   const updatedComment = await CommentService.updateById(id, body)
   updatedComment.user_id = req.user.id
+  updatedComment.user_id = req.user.id
+  updatedComment.likes = comment.likes
+  updatedComment.is_liked = comment.is_liked
   updatedComment.post_id = comment.post_id
   updatedComment.created_at = comment.created_at
 

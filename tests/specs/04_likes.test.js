@@ -25,6 +25,12 @@ describe('Likes route', () => {
         .query({ comment_id: 2 })
         .expect(400)
     })
+
+    it('Can\'t delete others like', async () => {
+      await request(app).delete(BASE_PATH)
+        .query({ comment_id: 1 })
+        .expect(400)
+    })
   })
 
   describe('User', () => {
@@ -43,6 +49,13 @@ describe('Likes route', () => {
         .query({ comment_id: 3 })
         .set('Authorization', users.user.token)
         .expect(200)
+    })
+
+    it('Can\'t delete others like', async () => {
+      await request(app).delete(BASE_PATH)
+        .query({ comment_id: 1 })
+        .set('Authorization', users.user.token)
+        .expect(404)
     })
   })
 
@@ -63,6 +76,13 @@ describe('Likes route', () => {
         .set('Authorization', users.editor.token)
         .expect(200)
     })
+
+    it('Can\'t delete others like', async () => {
+      await request(app).delete(BASE_PATH)
+        .query({ comment_id: 1 })
+        .set('Authorization', users.editor.token)
+        .expect(404)
+    })
   })
 
   describe('Admin', () => {
@@ -81,6 +101,13 @@ describe('Likes route', () => {
         .query({ comment_id: 1 })
         .set('Authorization', users.admin.token)
         .expect(200)
+    })
+
+    it('Can\'t delete others like', async () => {
+      await request(app).delete(BASE_PATH)
+        .query({ comment_id: 3 })
+        .set('Authorization', users.admin.token)
+        .expect(404)
     })
   })
 

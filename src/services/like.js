@@ -2,7 +2,6 @@ const shortid = require('shortid')
 const db = require('../models')
 const validate = require('../middlewares/validate')
 const { likeSchema } = require('../schemas')
-const deleteUndefinedFields = require('../utils/deleteUndefinedFields')
 
 const dbName = 'likes'
 
@@ -23,28 +22,22 @@ exports.create = async (data) => {
   return entity
 }
 
-exports.getAll = async ({ query }) => {
-  return db(dbName).where(query)
+exports.getAll = async ({ query, select = '*' }) => {
+  return db(dbName).where(query).select(select)
 }
 
-exports.getById = async (id) => {
-  return db(dbName).where({ id }).first()
+exports.getAllByPosts = async ({ query, select = '*' }) => {
+  return db(dbName).where(query).select(select).havingRaw(`${dbName}.post_id IS NOT ?`, [null])
+}
+
+exports.getAllByComments = async ({ query, select = '*' }) => {
+  return db(dbName).where(query).select(select).havingRaw(`${dbName}.comment_id IS NOT ?`, [null])
 }
 
 exports.getOneByQuery = async (query) => {
   await validate(likeSchema.create)({ body: query })
 
   return db(dbName).where(query).first()
-}
-
-exports.updateById = async (id, data) => {
-  const entity = deleteUndefinedFields({
-    updated_at: new Date(Date.now()),
-  })
-
-  await db(dbName).where({ id }).update(entity)
-
-  return { id, ...entity }
 }
 
 exports.deleteById = async (id) => {

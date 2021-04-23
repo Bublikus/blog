@@ -14,7 +14,7 @@ const authorize = (req, res, next) => {
       const isExpired = user.token ? user.token.exp < Date.now() / 1000 : true
 
       if (user && isExpired) {
-        res.json(new APIError('Token expired!', APIError.statusCodes.UNAUTHORIZED))
+        throw new APIError('Token expired!', APIError.statusCodes.UNAUTHORIZED)
       }
 
       req.token = token
