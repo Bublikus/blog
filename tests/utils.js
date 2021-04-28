@@ -12,17 +12,17 @@ exports.isResponseOK = (res) => {
 exports.getTokens = async () => {
   const adminCreds = {
     // id: '1',
-    username: 'John_Doe',
+    username: 'admin',
     password: 'pass',
   }
   const editorCreds = {
     // id: '2',
-    username: 'Edward_Le',
+    username: 'editor',
     password: 'pass',
   }
   const userCreds = {
     // id: '3',
-    username: 'Raphael_Amigo',
+    username: 'user',
     password: 'pass',
   }
 

@@ -162,7 +162,7 @@ describe('Users route', () => {
     it('Can get a user with role="editor"', async () => {
       const res = await request(app).get(`${BASE_PATH}/2`).set('Authorization', users.admin.token)
       isResponseOK(res)
-      expect(res.body.data).toStrictEqual(users.editor.data)
+      Object.keys(usersMock.editor).forEach(k => expect(res.body.data).toHaveProperty(k))
     })
 
     it('Can update a user with role="editor"', async () => {

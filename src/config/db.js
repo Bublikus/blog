@@ -1,6 +1,6 @@
 module.exports = {
   CLIENT: 'mysql',
-  HOST: '127.0.0.1',
+  HOST: 'localhost', // 'mysql_server',
   USER: 'root',
   PASSWORD: 'Rolique2018',
   DB: 'blog',
