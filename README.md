@@ -5,6 +5,7 @@
 ```bash
 docker-compose up -d
 ```
+It will install dependencies and along with that **migrations** and **seeds**
 
 ### and stop using
 
@@ -17,3 +18,4 @@ docker-compose down
 ```bash
 npm run test
 ```
+
