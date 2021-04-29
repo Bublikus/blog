@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  blog-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sh -c 'npm install && npm install -g knex && knex migrate:latest && knex seed:run && npm start'
+    ports:
+      - 49484:5001
+    volumes:
+      - .:/app
+      - '/app/node_modules'
+    depends_on:
+      - mysql_server
+
+  mysql_server:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 'Rolique2018'
+      MYSQL_PASS: 'Rolique2018'
+      MYSQL_DATABASE: 'blog'
+    ports:
+      - 3307:3306
