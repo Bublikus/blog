@@ -1,0 +1,11 @@
+.DS_Store
+.git
+.idea
+
+config/auto
+log
+temp
+vendor
+
+node_modules
+npm-debug.log
